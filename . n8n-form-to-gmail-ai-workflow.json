@@ -1,0 +1,217 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Onboarding Form ",
+        "formDescription": "This is an onboarding form , after filling it our team will get to you shortly.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "Lala",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "placeholder": "Sharma",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "placeholder": "lala@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "placeholder": "{+91} 122-3423",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Submit"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d1eabfbd-303b-48f2-ac2f-1e9b427ca8b3",
+      "name": "On form submission",
+      "webhookId": "87788c43-8364-4f7e-8b20-b86cbf22b5fd"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are helpful, intelligent email writing assistant.\n",
+              "role": "model"
+            },
+            {
+              "content": "=Your task is to customise an email using the following data:\n\nFirst Name: {{ $json['First Name'] }}\nLast Name: {{ $json['Last Name'] }}\nEmail Address: {{ $json['Email Address'] }}\nPhone Number: {{ $json['Phone Number'] }}\n---\nEmail Template:\n\nHey {First Name},\n\nHow are you? Thanks for submitting your onboarding form a moment ago\nI see your number is {Phone number}, and your Email is {Email}.\n\nCould you let me know if i am missing anything.\nThanks,\nVishesh\n-------\nDon't include the subject line\n\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "121876a6-85e7-47ec-b5fa-8b9ce06b86d3",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EcjqtdEIcR6XsHcr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "vishesh07007@gmail.com",
+        "subject": "Re: your onboarding form",
+        "emailType": "text",
+        "message": "= {{ $json.content.parts[0].text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        0
+      ],
+      "id": "bbbddd31-0714-4212-b851-96dcc188b659",
+      "name": "Send a message",
+      "webhookId": "9f5e37aa-5646-4513-bd3a-2c7274a6faba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4KfLtfFoadmKZftm",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 40
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        576,
+        0
+      ],
+      "id": "c781b330-3dc5-4850-9107-bdad778960bd",
+      "name": "Wait",
+      "webhookId": "7473ca7a-d154-4675-a359-fb9ccb6dd59a"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "First Name": "Papi",
+          "Last Name": "Sharma",
+          "Email Address": "papii@gmail.com",
+          "Phone Number": "123456678",
+          "submittedAt": "2025-11-18T16:46:54.276+05:30",
+          "formMode": "test"
+        }
+      }
+    ],
+    "Message a model": [
+      {
+        "json": {
+          "content": {
+            "parts": [
+              {
+                "text": "Hey Papi,\n\nHow are you? Thanks for submitting your onboarding form a moment ago\nI see your number is 123456678, and your Email is papii@gmail.com.\n\nCould you let me know if i am missing anything.\nThanks,\nVishesh"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      }
+    ],
+    "Send a message": [
+      {
+        "json": {
+          "id": "19a9a47edb48af33",
+          "threadId": "19a9a47edb48af33",
+          "labelIds": [
+            "SENT"
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "89e133dd-c744-4856-a6a9-a7e912ede390",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c89e01a4dca4f33003b1ee72722dcf542b5070eb7a0b5573f1d301202ea1b2c"
+  },
+  "id": "MjfZdJPflaAR0VfO",
+  "tags": []
+}
