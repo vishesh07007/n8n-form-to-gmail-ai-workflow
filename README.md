@@ -7,12 +7,14 @@ This project is an n8n workflow designed to automatically process form submissio
 
 ## Key Features
 Form Trigger: Initiated by any external form submission (e.g., Google Forms, Typeform).
+
 AI Content Generation: Uses an LLM (Message a model) to create context-aware, relevant text based on the submission data.
+
 Time Control: A configurable Wait period allows for delayed, more human-like response timing.
 
 Email Delivery: Sends the final AI-generated message to the required recipient using the Gmail node.
 
-Requirements
+## Requirements
 n8n Instance (Self-hosted or Cloud).
 
 Form Webhook or integration setup.
@@ -21,7 +23,7 @@ AI Service Credentials (e.g., Gemini, OpenAI) for the modeling node.
 
 Gmail Service Account or connection.
 
-Usage
+# Usage
 Import the workflow into n8n.
 
 Configure the On form submission node to receive data.
